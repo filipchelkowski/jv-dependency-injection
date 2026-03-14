@@ -13,6 +13,10 @@ import mate.academy.service.impl.ProductServiceImpl;
 
 public class Injector {
     private static final Injector injector = new Injector();
+    private static final Map<Class<?>, Class<?>> implementationMap = Map.of(
+        FileReaderService.class, FileReaderServiceImpl.class,
+        ProductParser.class, ProductParserImpl.class,
+        ProductService.class, ProductServiceImpl.class);
     private Map<Class<?>, Object> instances = new HashMap<>();
 
     public static Injector getInjector() {
@@ -66,16 +70,11 @@ public class Injector {
             return object;
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Can't create a news instance of "
-                    + clazz.getName());
+                    + clazz.getName(), e);
         }
     }
 
     private Class<?> findImplementation(Class<?> interfaceClazz) {
-        Map<Class<?>, Class<?>> implementationMap = new HashMap<>();
-        implementationMap.put(FileReaderService.class, FileReaderServiceImpl.class);
-        implementationMap.put(ProductParser.class, ProductParserImpl.class);
-        implementationMap.put(ProductService.class, ProductServiceImpl.class);
-
         if (interfaceClazz.isInterface()) {
             Class<?> implementation = implementationMap.get(interfaceClazz);
 
